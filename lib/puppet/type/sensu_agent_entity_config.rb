@@ -48,11 +48,10 @@ Puppet::Type.newtype(:sensu_agent_entity_config) do
 * `Sensuctl_configure[puppet]`
 * `Sensu_api_validator[sensu]`
 * `Sensu_user[admin]`
-* `sensu_namespace` - Puppet will autorequire `sensu_namespace` resource defined in `namespace` property.
 DESC
 
   extend PuppetX::Sensu::Type
-  add_autorequires()
+  add_autorequires(false)
 
   ensurable
 
@@ -181,6 +180,5 @@ DESC
     if !config.is_a?(Hash) && self[:value].nil?
       fail "You must provide a value for the value property"
     end
-    PuppetX::Sensu::Type.validate_namespace(self)
   end
 end
