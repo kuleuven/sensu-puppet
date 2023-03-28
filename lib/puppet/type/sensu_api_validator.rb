@@ -11,7 +11,7 @@ purposes such as monitoring.
 @example Verify API connectivity to localhost:8080
   sensu_api_validator { 'sensu':
     sensu_api_server => 'localhost',
-    sensu_api_ort    => 8080,
+    sensu_api_port    => 8080,
   }
 DESC
 
@@ -42,7 +42,7 @@ DESC
   end
 
   newparam(:timeout) do
-    desc 'The max number of seconds that the validator should wait before giving up and deciding that sensu_api is not running; defaults to 15 seconds.'
+    desc 'The max number of seconds that the validator should wait before giving up and deciding that sensu_api is not running; defaults to 30 seconds.'
     defaultto 30
 
     validate do |value|

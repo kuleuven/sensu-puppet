@@ -9,7 +9,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       let(:facts) { facts }
       let(:pre_condition) do
         <<-EOS
-        class { '::postgresql::globals': version => '9.6' }
+        class { '::postgresql::globals': version => '11' }
         class { '::postgresql::server': }
         class { 'sensu::backend': }
         EOS
@@ -52,11 +52,29 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       it { should_not contain_file('sensu-backend postgresql_crl') }
       it { should_not contain_file('sensu-backend postgresql_cert') }
       it { should_not contain_file('sensu-backend postgresql_key') }
-      
+
+      context 'with an empty password' do
+        let(:pre_condition) do
+          <<-EOS
+          class { '::postgresql::globals': version => '11' }
+          class { '::postgresql::server': }
+          class { 'sensu::backend': postgresql_password => false }
+          EOS
+        end
+
+        it do
+          should contain_sensu_postgres_config('postgresql').with({
+            :ensure    => 'present',
+            :dsn       => sensitive('postgresql://sensu@localhost:5432/sensu?sslmode=require'),
+            :pool_size => '20',
+          })
+        end
+      end
+
       context 'sslmode defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_sslmode => 'disable' }
           EOS
@@ -74,7 +92,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl ca source defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_ca_source => 'foo' }
           EOS
@@ -97,7 +115,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl ca content defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_ca_content => 'foo' }
           EOS
@@ -120,7 +138,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl crl source defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_crl_source => 'foo' }
           EOS
@@ -143,7 +161,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl crl content defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_crl_content => 'foo' }
           EOS
@@ -166,7 +184,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl cert source defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_cert_source => 'foo' }
           EOS
@@ -189,7 +207,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl cert content defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_cert_content => 'foo' }
           EOS
@@ -212,7 +230,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl key source defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_key_source => 'foo' }
           EOS
@@ -235,7 +253,7 @@ describe 'sensu::backend::datastore::postgresql', :type => :class do
       context 'ssl key content defined' do
         let(:pre_condition) do
           <<-EOS
-          class { '::postgresql::globals': version => '9.6' }
+          class { '::postgresql::globals': version => '11' }
           class { '::postgresql::server': }
           class { 'sensu::backend': postgresql_ssl_key_content => 'foo' }
           EOS

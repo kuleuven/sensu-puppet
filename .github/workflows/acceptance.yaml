@@ -16,13 +16,10 @@ jobs:
       matrix:
         set:
         - centos-7
-        - centos-8
-        - debian-9
+        - rocky-8
         - debian-10
-        - ubuntu-1604
         - ubuntu-1804
         - ubuntu-2004
-        - amazonlinux-2
         - amazonlinux-201803
         puppet:
         - puppet6
@@ -49,7 +46,7 @@ jobs:
       if: ${{ env.SENSU_SECRETS_PASSWORD != null }}
       run: ./tests/decrypt-secrets.sh
     - name: Run tests
-      run: bundle exec rake beaker
+      run: bundle exec rake acceptance
       env:
         BEAKER_PUPPET_COLLECTION: ${{ matrix.puppet }}
         BEAKER_set: ${{ matrix.set }}
